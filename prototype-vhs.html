@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Better Call Os! - VHS Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Oswald:wght@500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --os-yellow: #ffd100;
+      --os-red: #c8102e;
+      --font-display: 'Oswald', system-ui, sans-serif;
+      --font-script: 'Kaushan Script', system-ui, sans-serif;
+      --font-body: 'Rubik', system-ui, -apple-system, sans-serif;
+    }
+    
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+    body { font-family: var(--font-body); background-color: var(--os-yellow); color: #111827; }
+    a { color: inherit; }
+    
+    .font-display { font-family: var(--font-display); }
+    .font-script { font-family: var(--font-script); }
+    
+    /* VHS Scan Lines Overlay */
+    .scan-lines {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+    }
+    
+    /* VHS Tracking Glitch */
+    .vhs-glitch {
+      position: relative;
+    }
+    .vhs-glitch::before,
+    .vhs-glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+    .vhs-glitch:hover::before {
+      color: #ff0000;
+      transform: translate(-3px, 0);
+      opacity: 0.7;
+      animation: vhs-glitch-1 0.3s infinite;
+    }
+    .vhs-glitch:hover::after {
+      color: #00ffff;
+      transform: translate(3px, 0);
+      opacity: 0.7;
+      animation: vhs-glitch-2 0.3s infinite;
+    }
+    
+    @keyframes vhs-glitch-1 {
+      0%, 100% { clip-path: inset(20% 0 60% 0); }
+      25% { clip-path: inset(60% 0 20% 0); }
+      50% { clip-path: inset(40% 0 40% 0); }
+      75% { clip-path: inset(10% 0 70% 0); }
+    }
+    @keyframes vhs-glitch-2 {
+      0%, 100% { clip-path: inset(70% 0 10% 0); }
+      25% { clip-path: inset(30% 0 50% 0); }
+      50% { clip-path: inset(50% 0 30% 0); }
+      75% { clip-path: inset(80% 0 5% 0); }
+    }
+    
+    /* Chromatic Aberration on Title */
+    .chromatic-aberration {
+      position: relative;
+    }
+    .chromatic-aberration:hover {
+      animation: chromatic 0.2s ease-in-out;
+    }
+    @keyframes chromatic {
+      0%, 100% { 
+        text-shadow: -2px 0 #ff0000, 2px 0 #00ffff;
+        filter: none;
+      }
+      25% { 
+        text-shadow: 3px 0 #ff0000, -3px 0 #00ffff;
+        filter: blur(0.5px);
+      }
+      50% { 
+        text-shadow: -1px 0 #ff0000, 1px 0 #00ffff;
+        filter: blur(1px);
+      }
+      75% { 
+        text-shadow: 2px 0 #ff0000, -2px 0 #00ffff;
+        filter: blur(0.3px);
+      }
+    }
+    
+    /* REC Dot */
+    .rec-dot {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background: rgba(0,0,0,0.7);
+      padding: 6px 12px;
+      border-radius: 4px;
+      z-index: 9998;
+    }
+    .rec-dot span.dot {
+      width: 10px;
+      height: 10px;
+      background: #ff0000;
+      border-radius: 50%;
+      animation: rec-blink 1s infinite;
+    }
+    @keyframes rec-blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    
+    /* VHS Noise Effect */
+    .vhs-noise {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9997;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+    
+    /* VHS Tracking Lines (occasional horizontal distortion) */
+    .tracking-lines {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 9996;
+      background: transparent;
+      animation: tracking 8s infinite;
+    }
+    @keyframes tracking {
+      0%, 95%, 100% { background: transparent; }
+      96% { 
+        background: linear-gradient(
+          transparent 0%,
+          rgba(255,255,255,0.8) 48%,
+          rgba(255,255,255,0.8) 52%,
+          transparent 100%
+        );
+        transform: translateY(100px);
+      }
+      97% {
+        background: linear-gradient(
+          transparent 0%,
+          rgba(255,255,255,0.5) 45%,
+          rgba(255,255,255,0.5) 55%,
+          transparent 100%
+        );
+        transform: translateY(300px);
+      }
+      98% { background: transparent; }
+    }
+    
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    
+    .header {
+      background: var(--os-red);
+      color: white;
+      text-align: center;
+      padding: 16px;
+    }
+    .header p {
+      font-size: 14px;
+      letter-spacing: 0.3em;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin: 0;
+    }
+    
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-main {
+      background: var(--os-yellow);
+      padding: 40px 0;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    @media (min-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr 1fr; }
+    }
+    
+    .image-box {
+      border: 4px solid black;
+      box-shadow: 12px 12px 0 rgba(0,0,0,0.85);
+      overflow: hidden;
+      background: white;
+      position: relative;
+    }
+    .image-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* VHS image wobble */
+    .image-box:hover img {
+      animation: vhs-wobble 0.5s ease-in-out;
+    }
+    @keyframes vhs-wobble {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .content h1 {
+      font-size: 48px;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 0 0 16px 0;
+    }
+    @media (min-width: 640px) {
+      .content h1 { font-size: 60px; }
+    }
+    @media (min-width: 768px) {
+      .content h1 { font-size: 72px; }
+    }
+    
+    .subtitle {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #3f3f46;
+      margin-bottom: 8px;
+    }
+    .subtitle .red { color: var(--os-red); display: block; }
+    
+    .red-text { color: var(--os-red); }
+    
+    .description {
+      font-size: 16px;
+      color: rgba(17, 24, 39, 0.9);
+      max-width: 36rem;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 640px) {
+      .description { font-size: 18px; }
+    }
+    
+    .services {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (min-width: 640px) {
+      .services { grid-template-columns: 1fr 1fr; }
+    }
+    .service {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 16px;
+    }
+    .service-dot {
+      margin-top: 6px;
+      height: 6px;
+      width: 6px;
+      border-radius: 50%;
+      background: var(--os-red);
+      flex-shrink: 0;
+    }
+    .service strong { font-weight: 600; }
+    
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid black;
+      background: var(--os-red);
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      box-shadow: 6px 6px 0 rgba(0,0,0,0.85);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 10px 10px 0 rgba(0,0,0,0.85);
+    }
+    @media (min-width: 640px) {
+      .btn-primary { padding: 14px 28px; font-size: 18px; }
+    }
+    .email-link {
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-underline-offset: 4px;
+    }
+    @media (min-width: 640px) {
+      .email-link { font-size: 16px; }
+    }
+    
+    .case-cards {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .case-cards { grid-template-columns: 1fr 1fr; }
+    }
+    .case-card {
+      border: 2px solid black;
+      background: rgba(255,255,255,0.8);
+      padding: 12px;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.85);
+      font-size: 14px;
+    }
+    .case-card .case-num {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--os-red);
+    }
+    .case-card .case-title {
+      font-weight: 600;
+      margin: 4px 0;
+    }
+    .case-card .case-desc {
+      color: #3f3f46;
+    }
+    
+    /* Process Section */
+    .process-section {
+      background: #18181b;
+      color: #fafafa;
+      padding: 40px 0;
+    }
+    .process-grid {
+      display: grid;
+      gap: 32px;
+    }
+    @media (min-width: 1024px) {
+      .process-grid { grid-template-columns: 2fr 1fr; align-items: start; }
+    }
+    
+    .process-title {
+      font-size: 36px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 24px 0;
+    }
+    @media (min-width: 640px) {
+      .process-title { font-size: 42px; }
+    }
+    
+    .steps {
+      display: grid;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+    .step {
+      border: 1px solid #3f3f46;
+      background: rgba(24, 24, 27, 0.6);
+      padding: 16px;
+      border-radius: 6px;
+    }
+    .step-label {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--os-yellow);
+    }
+    .step-title {
+      font-weight: 600;
+      margin: 4px 0;
+    }
+    .step-desc {
+      color: #e4e4e7;
+      font-size: 14px;
+    }
+    
+    /* Contact Card */
+    .contact-card {
+      border: 2px solid var(--os-yellow);
+      background: #09090b;
+      padding: 24px;
+      border-radius: 6px;
+      box-shadow: 6px 6px 0 rgba(0,0,0,0.85);
+    }
+    .contact-label {
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: var(--os-yellow);
+    }
+    .contact-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 12px 0 8px 0;
+    }
+    .contact-desc {
+      color: #e4e4e7;
+      margin-bottom: 20px;
+    }
+    .contact-info {
+      font-size: 16px;
+    }
+    .contact-info p { margin: 4px 0; }
+    .contact-info .label { font-weight: 600; color: var(--os-yellow); }
+    .contact-info a { text-decoration: underline; text-underline-offset: 4px; text-decoration-style: dotted; }
+    .contact-info .disclaimer {
+      font-size: 12px;
+      color: #71717a;
+      font-style: italic;
+      margin-top: 8px;
+    }
+    
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #a1a1aa;
+      margin-top: 40px;
+    }
+    .tech-stack .stack {
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: #71717a;
+    }
+    
+    /* Footer */
+    .footer {
+      background: var(--os-red);
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+    }
+    @media (min-width: 640px) {
+      .footer { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- VHS Effects -->
+  <div class="vhs-noise"></div>
+  <div class="scan-lines"></div>
+  <div class="tracking-lines"></div>
+  <div class="rec-dot"><span class="dot"></span> REC</div>
+  
+  <div style="min-height: 100vh; display: flex; flex-direction: column; background: var(--os-yellow);">
+    <!-- Header -->
+    <header class="header">
+      <p>In vibe code trouble?</p>
+    </header>
+    
+    <!-- Hero -->
+    <main class="hero">
+      <section class="hero-main">
+        <div class="container">
+          <div class="hero-grid">
+            <!-- Image -->
+            <div class="image-box">
+              <img src="/image.png" alt="Os">
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+              <p class="subtitle">
+                Professional developer
+                <span class="red">Comedy-grade branding</span>
+              </p>
+              <h1 class="font-display chromatic-aberration vhs-glitch" data-text="Your sketchy code solver">
+                Your sketchy
+                <span class="red-text">code solver</span>
+              </h1>
+              <p class="description">
+                I'm Os, a senior developer who turns vibe-coded, legacy and
+                spaghetti projects into maintainable, testable systems. The site
+                is a joke. The refactors are not.
+              </p>
+              
+              <div class="services">
+                <div class="service">
+                  <span class="service-dot"></span>
+                  <span><strong>Laravel & PHP</strong> — PSR-12, PSR-4, refactors, bug hunts, and architecture.</span>
+                </div>
+                <div class="service">
+                  <span class="service-dot"></span>
+                  <span><strong>Flutter & React Native</strong> — widget hell, state chaos, and performance issues.</span>
+                </div>
+                <div class="service">
+                  <span class="service-dot"></span>
+                  <span><strong>JavaScript & frontends</strong> — globals, copy-paste, webpack/Vite headaches.</span>
+                </div>
+                <div class="service">
+                  <span class="service-dot"></span>
+                  <span><strong>Codebase audits</strong> — honest reports, concrete next steps, no bullshit.</span>
+                </div>
+              </div>
+              
+              <div class="cta-group">
+                <button class="btn-primary font-display" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+                  Fix my vibe code
+                </button>
+                <a href="mailto:hi@oscararzola.com?subject=In%20vibe%20code%20trouble" class="email-link">
+                  Or email me: hi@oscararzola.com
+                </a>
+              </div>
+              
+              <div class="case-cards">
+                <div class="case-card">
+                  <p class="case-num">Case #404</p>
+                  <p class="case-title">The 2,000-line controller (Laravel)</p>
+                  <p class="case-desc">Split into services, added tests, shaved 70% off bug reports.</p>
+                </div>
+                <div class="case-card">
+                  <p class="case-num">Case #500</p>
+                  <p class="case-title">The crashing mobile app (Flutter)</p>
+                  <p class="case-desc">Untangled state, fixed memory leaks, and stabilized releases.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Process + Contact -->
+      <section class="process-section">
+        <div class="container">
+          <div class="process-grid">
+            <div>
+              <h2 class="font-display process-title">How I clean your code record</h2>
+              <div class="steps">
+                <div class="step">
+                  <p class="step-label">Step 1 · Discovery</p>
+                  <p class="step-title">You explain the crime scene.</p>
+                  <p class="step-desc">Stack, repo, deadlines, what keeps you up at night.</p>
+                </div>
+                <div class="step">
+                  <p class="step-label">Step 2 · Audit</p>
+                  <p class="step-title">I review the evidence.</p>
+                  <p class="step-desc">Architecture, performance, tests, and nasty surprises.</p>
+                </div>
+                <div class="step">
+                  <p class="step-label">Step 3 · Fix</p>
+                  <p class="step-title">I refactor and patch.</p>
+                  <p class="step-desc">Focus on safety, clarity, tests, and future maintainers.</p>
+                </div>
+                <div class="step">
+                  <p class="step-label">Step 4 · Handover</p>
+                  <p class="step-title">You get the clean record.</p>
+                  <p class="step-desc">PRs, documentation, and suggested next steps.</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Contact Card -->
+            <div class="contact-card" id="contact">
+              <p class="contact-label">Call Os now</p>
+              <p class="contact-title">Have a cursed codebase?</p>
+              <p class="contact-desc">
+                Send me a quick summary of your stack, repo size and main
+                problems. I'll reply with options and a rough plan.
+              </p>
+              <div class="contact-info">
+                <p><span class="label">Email:</span> <a href="mailto:hi@oscararzola.com?subject=In%20vibe%20code%20trouble">hi@oscararzola.com</a></p>
+                <p><span class="label">Fake hotline:</span> (500) 404-CODE</p>
+                <p class="disclaimer">Not an actual phone line. Please don't call, your phone deserves better.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tech-stack">
+            <p class="stack">Laravel · PHP · Flutter · React Native · JavaScript</p>
+            <p>Built with real best practices, despite the sketchy branding.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      Not bug free · Se habla Español
+    </footer>
+  </div>
+</body>
+</html>
