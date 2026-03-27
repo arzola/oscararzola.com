@@ -95,7 +95,7 @@ function App() {
                 <span className="starburst-text">FREE<br />AUDIT!</span>
               </div>
 
-              <img src="/image.png" alt="Os" className="w-full h-auto block" />
+              <img src="/os-call.jpg" alt="Os" className="w-full h-auto block" />
             </div>
 
             {/* Content side */}
