@@ -95,7 +95,10 @@ function App() {
                 <span className="starburst-text">FREE<br />AUDIT!</span>
               </div>
 
-              <img src="/os-call.jpg" alt="Os" className="w-full h-auto block" />
+              <picture>
+                <source srcSet="/call-os3.webp" type="image/webp" />
+                <img src="/call-os3.jpg" alt="Os" className="w-full h-auto block" loading="eager" />
+              </picture>
             </div>
 
             {/* Content side */}
