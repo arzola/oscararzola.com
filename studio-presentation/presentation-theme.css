@@ -1,0 +1,168 @@
+/* @theme pb-studio */
+@import 'default';
+
+:root {
+    --pb-teal-50:  #6ba3ad;
+    --pb-teal-70:  #357682;
+    --pb-teal-90:  #1a3b41;
+    --pb-teal-5:   #ecf4f6;
+    --pb-ink:      #1d2327;
+    --pb-ink-soft: #50575e;
+    --pb-paper:    #fafaf9;
+    --pb-rule:     #dcdcde;
+    --pb-legacy-red: #b01b2e;
+    --pb-code-bg:  #1e2a2c;
+    --pb-code-fg:  #d8e6e8;
+    --pb-code-key: #8fd0d8;
+    --pb-code-str: #c5d86d;
+}
+
+section {
+    background: var(--pb-paper);
+    color: var(--pb-ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 40px 56px;
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+h1, h2, h3 { color: var(--pb-teal-90); font-weight: 700; letter-spacing: -0.01em; }
+h1 { font-size: 56px; line-height: 1.1; margin: 0 0 16px; }
+h2 { font-size: 36px; border-bottom: 3px solid var(--pb-teal-50); padding-bottom: 8px; margin: 0 0 18px; }
+h3 { font-size: 26px; color: var(--pb-teal-70); margin: 16px 0 8px; }
+
+a, strong { color: var(--pb-teal-70); }
+ul, ol { padding-left: 1.3em; margin: 8px 0; }
+li { margin-bottom: 4px; }
+li::marker { color: var(--pb-teal-50); }
+
+p { margin: 8px 0; }
+
+blockquote {
+    border-left: 4px solid var(--pb-teal-50);
+    background: var(--pb-teal-5);
+    padding: 12px 20px;
+    margin: 16px 0;
+    color: var(--pb-ink);
+    font-style: normal;
+}
+
+code {
+    background: var(--pb-teal-5);
+    color: var(--pb-teal-90);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.85em;
+}
+
+pre {
+    background: var(--pb-code-bg);
+    color: var(--pb-code-fg);
+    border-left: 4px solid var(--pb-teal-50);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.45;
+    overflow: auto;
+    margin: 12px 0;
+}
+pre code { background: transparent; color: inherit; padding: 0; font-size: inherit; }
+.hljs-keyword, .hljs-built_in, .hljs-attr { color: var(--pb-code-key); }
+.hljs-string  { color: var(--pb-code-str); }
+.hljs-comment { color: #7a8a8c; font-style: italic; }
+.hljs-title, .hljs-function .hljs-title { color: #f0c987; }
+.hljs-number, .hljs-literal { color: #f29191; }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 18px;
+    background: var(--pb-paper);
+    color: var(--pb-ink);
+    margin: 8px 0;
+}
+th, td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--pb-rule);
+    text-align: left;
+    background: var(--pb-paper);
+    color: var(--pb-ink);
+    vertical-align: top;
+}
+th {
+    background: var(--pb-teal-5);
+    color: var(--pb-teal-90);
+    font-weight: 700;
+}
+tr:nth-child(even) td { background: #f4f6f7; }
+
+footer { color: var(--pb-ink-soft); font-size: 16px; left: 0; right: 0; text-align: center; }
+header { color: var(--pb-teal-70); font-size: 16px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+section.lead {
+    background: linear-gradient(135deg, var(--pb-teal-90) 0%, var(--pb-teal-70) 100%);
+    color: #fff;
+    text-align: center;
+    justify-content: center;
+}
+section.lead h1, section.lead h2, section.lead h3 { color: #fff; border: none; }
+section.lead h1 { font-size: 72px; }
+section.lead blockquote { background: rgba(255,255,255,0.1); border-color: #fff; color: #fff; }
+
+section.split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+section.split > h2 { grid-column: 1 / -1; }
+
+section.full-image { padding: 0; }
+section.full-image img { width: 100%; height: 100%; object-fit: cover; }
+section.full-image h2 { position: absolute; bottom: 32px; left: 56px; background: rgba(26,59,65,0.92); color: #fff; padding: 12px 24px; border: none; border-radius: 4px; }
+
+/* Caption-band layout: full-bleed image with a tidy caption strip
+   below it. Use via <!-- _class: caption-band --> and structure the
+   slide as: H2, image (Marp ![bg]), then a <p class="caption-lead">. */
+section.caption-band {
+    padding: 0;
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+section.caption-band h2 {
+    position: absolute;
+    top: 24px;
+    left: 56px;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--pb-teal-90);
+    padding: 8px 18px;
+    font-size: 26px;
+    border: none;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+section.caption-band .caption-lead {
+    grid-row: 2;
+    margin: 0;
+    padding: 18px 56px 48px; /* extra bottom padding clears the footer/pagination band */
+    background: var(--pb-teal-90);
+    color: #fff;
+    font-size: 20px;
+    line-height: 1.4;
+    border-top: 4px solid var(--pb-teal-50);
+}
+section.caption-band .caption-lead strong { color: var(--pb-teal-50); }
+
+/* Caption-band slides: footer + pagination sit inside the teal strip,
+   so flip their colour to white for legibility against the dark band. */
+section.caption-band footer,
+section.caption-band::after { color: rgba(255, 255, 255, 0.75); }
+
+.legacy { color: var(--pb-legacy-red); }
+.kbd { background: #fff; border: 1px solid var(--pb-rule); border-bottom-width: 2px; border-radius: 4px; padding: 2px 8px; font-family: 'SF Mono', Menlo, monospace; font-size: 0.85em; }
+.pill { display: inline-block; background: var(--pb-teal-5); color: var(--pb-teal-90); padding: 4px 12px; border-radius: 999px; font-size: 0.75em; font-weight: 600; }
+.callout { background: var(--pb-teal-5); border-left: 4px solid var(--pb-teal-50); padding: 12px 16px; margin: 12px 0; font-size: 19px; }
+
+/* Density helpers for content-heavy slides. Add via <!-- _class: dense --> */
+section.dense { font-size: 19px; padding: 32px 48px; }
+section.dense h2 { font-size: 32px; margin-bottom: 12px; }
+section.dense table { font-size: 16px; }
+section.dense pre { font-size: 13px; padding: 10px 14px; }
+section.dense li { margin-bottom: 2px; }
